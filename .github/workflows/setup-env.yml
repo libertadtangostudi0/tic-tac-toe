@@ -1,0 +1,81 @@
+name: Setup Python environment (Debug)
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Enable debug shell mode
+        run: |
+          echo "Enabling debug shell"
+          set -x
+
+      - name: Print runner info
+        run: |
+          echo "### RUNNER INFO ###"
+          uname -a
+          lsb_release -a || true
+          echo "Home: $HOME"
+          echo "Working directory: $GITHUB_WORKSPACE"
+
+      - name: List repository files
+        run: |
+          echo "### PROJECT FILE TREE ###"
+          ls -R .
+
+      - name: Print environment variables
+        run: |
+          echo "### ENVIRONMENT VARIABLES ###"
+          env | sort
+
+      - name: Print pyproject.toml
+        run: |
+          echo "### PYPROJECT ###"
+          cat pyproject.toml
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Verify python installation
+        run: |
+          which python
+          python --version
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+
+      - name: Sync dependencies with uv (debug)
+        run: |
+          echo "### UV SYNC START ###"
+          uv sync --frozen --verbose
+          echo "### UV SYNC DONE ###"
+
+      - name: Show venv structure
+        run: |
+          echo "### .venv CONTENT ###"
+          ls -R .venv
+
+      - name: List installed packages
+        run: |
+          echo "### INSTALLED PACKAGES ###"
+          uv pip list
+
+      - name: Final debug summary
+        run: |
+          echo "ENV SETUP COMPLETE"
+          echo "Python: $(python --version)"
+          echo "Runner: $(uname -a)"
