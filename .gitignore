@@ -29,3 +29,23 @@ dist/
 
 # Tk file dialogs cache
 *.tcl
+
+# --- Rust ---
+# Ignore Rust build artifacts for launcher
+launcher/target/
+
+# Do not commit executable binaries
+*.exe
+*.dll
+*.so
+*.dylib
+
+# --- OS files ---
+.DS_Store
+Thumbs.db
+
+# --- Tk file dialog temp files ---
+*.tmp
+
+# --- Game assets cache (if needed) ---
+cache/
