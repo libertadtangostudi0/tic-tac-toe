@@ -1,0 +1,14 @@
+[project]
+name = "cross_zero"
+version = "0.1.0"
+description = "Pygame Tic Tac Toe game"
+requires-python = ">=3.13"
+
+dependencies = [
+    "pygame",
+    "loguru",
+    "pydantic",
+]
+
+[tool.uv]
+python = "3.13"
