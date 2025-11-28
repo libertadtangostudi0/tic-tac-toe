@@ -1,0 +1,13 @@
+BASE_SIZE = 480       # logic game place (px)
+GRID_SIZE = 3
+CELL_SIZE = BASE_SIZE // GRID_SIZE
+
+# colors
+BG_COLOR = (30, 30, 30)
+LINE_COLOR = (200, 200, 200)
+X_COLOR = (220, 70, 70)
+O_COLOR = (70, 150, 220)
+
+LINE_WIDTH = 4
+MARK_WIDTH = 10
+FPS = 60

@@ -1,0 +1,27 @@
+{
+  "themes": [
+    {
+      "id": "classic",
+      "name": "Classic X/O",
+      "type": "builtin"
+    },
+
+    {
+      "id": "neon",
+      "name": "Neon",
+      "type": "image",
+      "x_image": "img/cross.jpg",
+      "o_image": "img/zero.jpg"
+    },
+    
+    {
+      "id": "neon-animated",
+      "name": "Neon Animated",
+      "type": "animated",
+      "x_strip": "img/cross.jpg",
+      "o_strip": "img/zero.jpg",
+      "frames": 8,
+      "frame_duration_ms": 1000
+    }
+  ]
+}
