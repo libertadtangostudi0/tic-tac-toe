@@ -1,0 +1,39 @@
+name: Build tic_launcher.exe
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - "launcher/**"
+      - ".github/workflows/rust-launcher.yml"
+  pull_request:
+    paths:
+      - "launcher/**"
+      - ".github/workflows/rust-launcher.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build-launcher:
+    runs-on: windows-latest
+
+    defaults:
+      run:
+        working-directory: launcher
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust (stable)
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build tic_launcher (release)
+        run: cargo build --bin tic_launcher --release
+
+      - name: Upload tic_launcher.exe
+        uses: actions/upload-artifact@v4
+        with:
+          name: tic_launcher
+          path: launcher/target/release/tic_launcher.exe
