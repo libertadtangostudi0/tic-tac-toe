@@ -18,6 +18,7 @@ cargo build --bin tic_launcher --release
  
 ```bash
 git clone https://github.com/libertadtangostudi0/tic-tac-toe.git
-cd tic-tac-toe
-.\launcher\target\release\tic_launcher.exe
+cd tic-tac-toe\launcher
+cargo build --bin tic_launcher --release
+.\target\release\tic_launcher.exe
 ```
