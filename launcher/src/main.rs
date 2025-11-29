@@ -30,28 +30,37 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-/// Detect project root by locating main.py near the executable
+/// Detect project root by locating main.py or game/main.py near the executable
 fn find_project_root() -> Result<PathBuf> {
+    use std::path::PathBuf;
+
     let exe = std::env::current_exe().context("Unable to locate current exe path")?;
-    let exe_dir = exe.parent().context("Executable has no parent directory")?;
+    let mut dir: PathBuf = exe
+        .parent()
+        .context("Executable has no parent directory")?
+        .to_path_buf();
 
-    // Case 1: main.py is in same folder
-    if exe_dir.join("main.py").exists() {
-        return Ok(exe_dir.to_path_buf());
-    }
+    // Walk up several levels: target/release -> target -> launcher -> project root -> ...
+    for _ in 0..8 {
+        let main_py = dir.join("main.py");
+        let game_main_py = dir.join("game").join("main.py");
 
-    // Case 2: main.py is in parent folder
-    let parent = exe_dir.parent().context("No parent directory above exe")?;
-    if parent.join("main.py").exists() {
-        return Ok(parent.to_path_buf());
+        if main_py.exists() || game_main_py.exists() {
+            // dir is project root (contains main.py or game/main.py)
+            return Ok(dir);
+        }
+
+        // Go one level up; stop if there is nowhere to go
+        if !dir.pop() {
+            break;
+        }
     }
 
     Err(anyhow!(
-        "Unable to locate project root: main.py not found"
+        "Unable to locate project root: main.py or game/main.py not found"
     ))
-}
+}    
 
-/// Create virtual environment using `uv venv`
 fn create_venv(project_root: &Path) -> Result<()> {
     let status = Command::new("uv")
         .arg("venv")
@@ -63,7 +72,6 @@ fn create_venv(project_root: &Path) -> Result<()> {
     if !status.success() {
         return Err(anyhow!("uv venv returned error"));
     }
-
     Ok(())
 }
 
@@ -78,7 +86,6 @@ fn uv_sync(project_root: &Path) -> Result<()> {
     if !status.success() {
         return Err(anyhow!("uv sync returned error"));
     }
-
     Ok(())
 }
 
@@ -94,17 +101,16 @@ fn python_path(venv: &Path) -> PathBuf {
 /// Launch game using python main.py
 fn run_game(project_root: &Path, python: &Path) -> Result<()> {
     let status = Command::new(python)
-        .arg("main.py")
+        .arg("game/main.py")
         .current_dir(project_root)
         .stdin(Stdio::inherit())
         .stdout(Stdio::inherit())
         .stderr(Stdio::inherit())
         .status()
-        .context("Failed to launch main.py")?;
+        .context("Failed to launch game/main.py")?;
 
     if !status.success() {
         return Err(anyhow!("Game exited with error"));
     }
-
     Ok(())
 }
